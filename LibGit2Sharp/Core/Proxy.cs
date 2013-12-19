@@ -722,6 +722,16 @@ namespace LibGit2Sharp.Core
             }
         }
 
+        public static int git_diff_num_deltas(DiffSafeHandle diff)
+        {
+            return (int)NativeMethods.git_diff_num_deltas(diff);
+        }
+
+        public static GitDiffDelta git_diff_get_delta(DiffSafeHandle diff, int idx)
+        {
+            return NativeMethods.git_diff_get_delta(diff, (UIntPtr)idx);
+        }
+
         #endregion
 
         #region git_graph_
@@ -1175,6 +1185,35 @@ namespace LibGit2Sharp.Core
         public static void git_odb_free(IntPtr odb)
         {
             NativeMethods.git_odb_free(odb);
+        }
+
+        #endregion
+
+        #region git_patch_
+
+        public static void git_patch_free(IntPtr patch)
+        {
+            NativeMethods.git_patch_free(patch);
+        }
+
+        public static PatchSafeHandle git_patch_from_diff(DiffSafeHandle diff, int idx)
+        {
+            using (ThreadAffinity())
+            {
+                PatchSafeHandle handle;
+                int res = NativeMethods.git_patch_from_diff(out handle, diff, (UIntPtr) idx);
+                Ensure.ZeroResult(res);
+                return handle;
+            }
+        }
+
+        public static void git_patch_print(PatchSafeHandle patch, NativeMethods.git_diff_line_cb printCallback)
+        {
+            using (ThreadAffinity())
+            {
+                int res = NativeMethods.git_patch_print(patch, printCallback, IntPtr.Zero);
+                Ensure.ZeroResult(res);
+            }
         }
 
         #endregion

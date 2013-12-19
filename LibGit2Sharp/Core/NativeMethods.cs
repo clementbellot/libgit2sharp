@@ -479,6 +479,12 @@ namespace LibGit2Sharp.Core
             GitDiffFindOptions options);
 
         [DllImport(libgit2)]
+        internal static extern UIntPtr git_diff_num_deltas(DiffSafeHandle diff);
+
+        [DllImport(libgit2)]
+        internal static extern GitDiffDelta git_diff_get_delta(DiffSafeHandle diff, UIntPtr idx);
+
+        [DllImport(libgit2)]
         internal static extern int git_graph_ahead_behind(out UIntPtr ahead, out UIntPtr behind, RepositorySafeHandle repo, ref GitOid one, ref GitOid two);
 
         [DllImport(libgit2)]
@@ -665,6 +671,15 @@ namespace LibGit2Sharp.Core
 
         [DllImport(libgit2)]
         internal static extern GitObjectType git_object_type(GitObjectSafeHandle obj);
+
+        [DllImport(libgit2)]
+        internal static extern int git_patch_from_diff(out PatchSafeHandle patch, DiffSafeHandle diff, UIntPtr idx);
+
+        [DllImport(libgit2)]
+        internal static extern int git_patch_print(PatchSafeHandle patch, git_diff_line_cb print_cb, IntPtr payload);
+
+        [DllImport(libgit2)]
+        internal static extern void git_patch_free(IntPtr patch);
 
         [DllImport(libgit2)]
         internal static extern int git_push_new(out PushSafeHandle push, RemoteSafeHandle remote);
