@@ -79,8 +79,12 @@ namespace LibGit2Sharp.Tests
             var content = new byte[] { 0x1, 0x0, 0x2, 0x0 };
 
             using (var binfile = File.Create(path))
+            {
                 for (int i = 0; i < 1000; i++)
+                {
                     binfile.Write(content, 0, content.Length);
+                }
+            }
         }
 
         [Fact]
