@@ -88,7 +88,7 @@ namespace LibGit2Sharp.Tests
         }
 
         [Fact]
-        public void CanReportABinaryChange()
+        public void CanDetectABinaryChange()
         {
             using (var repo = new Repository(CloneStandardTestRepo()))
             {
@@ -114,7 +114,7 @@ namespace LibGit2Sharp.Tests
         }
 
         [Fact]
-        public void CanReportABinaryDeletion()
+        public void CanDetectABinaryDeletion()
         {
             using (var repo = new Repository(CloneStandardTestRepo()))
             {
