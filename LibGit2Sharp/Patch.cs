@@ -32,21 +32,22 @@ namespace LibGit2Sharp
 
         internal Patch(DiffSafeHandle diff)
         {
-            Proxy.git_diff_foreach(diff, FileCallback, null, null);
+            int count = Proxy.git_diff_num_deltas(diff);
+            for (int i = 0; i < count; i++)
+            {
+                using (var patch = Proxy.git_patch_from_diff(diff, i))
+                {
+                    var delta = Proxy.git_diff_get_delta(diff, i);
+                    AddFileChange(delta);
+                    Proxy.git_patch_print(patch, PrintCallBack);
+                }
 
-            Proxy.git_diff_print(diff, PrintCallBack);
-        }
-
-        private int FileCallback(GitDiffDelta delta, float progress, IntPtr payload)
-        {
-            AddFileChange(delta);
-            return 0;
+            }
         }
 
         private void AddFileChange(GitDiffDelta delta)
         {
             var newFilePath = LaxFilePathMarshaler.FromNative(delta.NewFile.Path);
-
             changes.Add(newFilePath, new ContentChanges(delta.IsBinary()));
         }
 

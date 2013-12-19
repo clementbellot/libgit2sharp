@@ -103,14 +103,12 @@ namespace LibGit2Sharp.Tests
                 File.AppendAllText(filepath, "abcdef");
 
                 var patch = repo.Diff.Compare<Patch>(commit.Tree, DiffTargets.WorkingDirectory, new[] { filename });
-                Trace.Write(patch[filename].Patch);
                 Assert.True(patch[filename].IsBinaryComparison);
 
                 repo.Index.Stage(filename);
                 var commit2 = repo.Commit("Update binary file", new Signature("me", "me@example.com", DateTimeOffset.Now));
 
                 var patch2 = repo.Diff.Compare<Patch>(commit.Tree, commit2.Tree, new[] { filename });
-                Trace.Write(patch2[filename].Patch);
                 Assert.True(patch2[filename].IsBinaryComparison);
             }
         }
@@ -132,14 +130,12 @@ namespace LibGit2Sharp.Tests
                 File.Delete(filepath);
 
                 var patch = repo.Diff.Compare<Patch>(commit.Tree, DiffTargets.WorkingDirectory, new [] {filename});
-                Trace.Write(patch[filename].Patch);
                 Assert.True(patch[filename].IsBinaryComparison);
 
                 repo.Index.Remove(filename);
                 var commit2 = repo.Commit("Delete binary file", me);
 
                 var patch2 = repo.Diff.Compare<Patch>(commit.Tree, commit2.Tree, new[] { filename });
-                Trace.Write(patch2[filename].Patch);
                 Assert.True(patch2[filename].IsBinaryComparison);
             }
         }
