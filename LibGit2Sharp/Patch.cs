@@ -47,14 +47,19 @@ namespace LibGit2Sharp
 
         private void AddFileChange(GitDiffDelta delta)
         {
-            var newFilePath = LaxFilePathMarshaler.FromNative(delta.NewFile.Path);
+            var pathPtr = delta.NewFile.Path != IntPtr.Zero ? delta.NewFile.Path : delta.OldFile.Path;
+            var newFilePath = LaxFilePathMarshaler.FromNative(pathPtr);
             changes.Add(newFilePath, new ContentChanges(delta.IsBinary()));
         }
 
         private int PrintCallBack(GitDiffDelta delta, GitDiffHunk hunk, GitDiffLine line, IntPtr payload)
         {
             string patchPart = LaxUtf8Marshaler.FromNative(line.content, (int)line.contentLen);
-            var filePath = LaxFilePathMarshaler.FromNative(delta.NewFile.Path);
+
+            // Deleted files mean no "new file" path
+
+            var pathPtr = delta.NewFile.Path != IntPtr.Zero ? delta.NewFile.Path : delta.OldFile.Path;
+            var filePath = LaxFilePathMarshaler.FromNative(pathPtr);
 
             ContentChanges currentChange = this[filePath];
             string prefix = string.Empty;
@@ -78,10 +83,10 @@ namespace LibGit2Sharp
                     break;
             }
 
-            string formatedOutput = string.Concat(prefix, patchPart);
+            string formattedOutput = string.Concat(prefix, patchPart);
 
-            fullPatchBuilder.Append(formatedOutput);
-            this[filePath].AppendToPatch(formatedOutput);
+            fullPatchBuilder.Append(formattedOutput);
+            currentChange.AppendToPatch(formattedOutput);
 
             return 0;
         }
